@@ -15,6 +15,7 @@ public class SimpleClient {
         System.out.println("Simple Client Demo started....");
         new SimpleClient().startClient();
         System.out.println("Simple Client Demo finished!");
+        
     }
 
     private void startClient() {
