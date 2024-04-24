@@ -1,42 +1,58 @@
-
 import java.io.*;
 import java.net.Socket;
 
-/* simple client demo */
-/* single request scenario */
-
 public class SimpleClient {
-    Socket s = null;
+    private Socket socket;
+    private BufferedReader userInput;
+    private PrintWriter out;
+    private BufferedReader in;
     private int portNumber = 5445;
-    private BufferedReader inStreamReader = null;
-    private PrintWriter outStreamWriter = null;
+    static boolean ready = true;
 
     public static void main(String[] args) {
         System.out.println("Simple Client Demo started....");
-        new SimpleClient().startClient();
-        System.out.println("Simple Client Demo finished!");
-        
+        //while (ready){
+            new SimpleClient().startClient();
+
+        //}
     }
 
     private void startClient() {
         try {
-            s = new Socket("localhost", portNumber);        // implicit connect --> blocking call
-            // get the output (byte) stream from the data socket object and transform the byte stream into a
-            // more comfortable  PrintWriter character stream
-            outStreamWriter = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
-            // send request to server
-            outStreamWriter.println("Hello World");
-            // get the input (byte) stream from the data socket object and transform the byte stream into a
-            // more comfortable BufferedReader character stream
-            inStreamReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            // receive response
-            String response = inStreamReader.readLine();  // blocking call
-            System.out.println("Client received response from server: (" + response + ")");
-            // close data socket to server
-            s.close();
-            System.out.println("Connection to server closed!");
+            socket = new Socket("localhost", portNumber);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            userInput = new BufferedReader(new InputStreamReader(System.in));
+while (true) {
+
+            System.out.println("Enter your request (press Enter twice to send):");
+            String line;
+            StringBuilder requestBuilder = new StringBuilder();
+
+            while ((line = userInput.readLine()) != null && !line.isEmpty()) {
+                requestBuilder.append(line).append("\n");
+                if (line.equals("exit")) {
+                    break;
+                }
+
+            }
+
+            out.println(requestBuilder);
+
+
+            String response = in.readLine();
+            System.out.println("Server response: " + response);
+
+            if (line.equals("exit")) {
+                System.out.println("Simple Client Demo finished!");
+                break;
+            }
+
+
+        }
+        socket.close();
         } catch (IOException e) {
-            System.err.println("IOException during some socket operation..." + e.getLocalizedMessage());
+            System.err.println("IOException during client operation: " + e.getMessage());
         }
     }
 }
