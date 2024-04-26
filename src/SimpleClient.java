@@ -32,7 +32,9 @@ while (true) {
             while ((line = userInput.readLine()) != null && !line.isEmpty()) {
                 requestBuilder.append(line).append("\n");
                 if (line.equals("exit")) {
-                    break;
+                    //System.out.println("Simple Client Demo finished!");
+                    //socket.close();
+                   break;
                 }
 
             }
